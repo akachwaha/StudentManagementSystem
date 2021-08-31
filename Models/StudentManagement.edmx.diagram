@@ -10,9 +10,16 @@
         <EntityTypeShape EntityType="StudentManagementSystemModel.Role" Width="1.5" PointX="0.75" PointY="1.125" IsExpanded="true" />
         <EntityTypeShape EntityType="StudentManagementSystemModel.StRegisteredCours" Width="1.5" PointX="2.75" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="StudentManagementSystemModel.student" Width="1.5" PointX="4.75" PointY="3.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="StudentManagementSystemModel.Tutor" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
         <AssociationConnector Association="StudentManagementSystemModel.R_10" ManuallyRouted="false" />
         <AssociationConnector Association="StudentManagementSystemModel.FK_CourseId" />
+        <EntityTypeShape EntityType="StudentManagementSystemModel.Tutor" Width="1.5" PointX="5.375" PointY="0.75" />
+        <EntityTypeShape EntityType="StudentManagementSystemModel.AspNetRole" Width="1.5" PointX="7.375" PointY="2.5" />
+        <EntityTypeShape EntityType="StudentManagementSystemModel.AspNetUserClaim" Width="1.5" PointX="11.875" PointY="3.625" />
+        <EntityTypeShape EntityType="StudentManagementSystemModel.AspNetUserLogin" Width="1.5" PointX="11.875" PointY="1" />
+        <EntityTypeShape EntityType="StudentManagementSystemModel.AspNetUser" Width="1.5" PointX="9.625" PointY="1.375" />
+        <AssociationConnector Association="StudentManagementSystemModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" />
+        <AssociationConnector Association="StudentManagementSystemModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" />
+        <AssociationConnector Association="StudentManagementSystemModel.AspNetUserRoles" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

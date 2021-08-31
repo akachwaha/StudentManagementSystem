@@ -5,10 +5,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Courses</h2>
+<h2>List of Courses</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Add New Course", "Create")
 </p>
 <table class="table">
     <tr>
@@ -48,9 +48,11 @@
             @Html.DisplayFor(modelItem => item.CourseCode)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.CourseId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.CourseId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.CourseId })
+            @Html.ActionLink("Edit", "Edit", new { id = item.CourseId }) |
+            @Html.ActionLink("Details", "Details", new { id = item.CourseId }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.CourseId })|
+            @Html.ActionLink("Register", "Create", "StRegisteredCours" @*new { id = item.CourseId }*@)
+            @*<a href='@Html.ActionLink("Index", "students")'class="btn btn-primary btn-lg">Register&raquo;></a>*@
         </td>
     </tr>
 }

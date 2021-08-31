@@ -5,7 +5,7 @@ namespace SMS_3.Models
     public class CourseModel
     {
         [Required]
-        [MaxLength(3)]
+        [MaxLength(20)]
         public string CourseName { get; set; }
 
         [Required]

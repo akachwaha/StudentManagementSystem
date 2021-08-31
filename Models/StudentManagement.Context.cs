@@ -33,6 +33,10 @@ namespace SMS_3.Models
         public virtual DbSet<StRegisteredCours> StRegisteredCourses { get; set; }
         public virtual DbSet<student> students { get; set; }
         public virtual DbSet<Tutor> Tutors { get; set; }
+        public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
+        public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
+        public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
+        public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
     
         public virtual ObjectResult<LoginByUsernamePassword_Result> LoginByUsernamePassword(string username, string password)
         {

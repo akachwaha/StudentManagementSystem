@@ -12,13 +12,13 @@ namespace SMS_3.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Tutor
+    public partial class AspNetUserClaim
     {
-        public System.Guid TutorId { get; set; }
-        public string Tutorname { get; set; }
-        public string Tutoremail { get; set; }
-        public string Qualification { get; set; }
-        public string Phone { get; set; }
-        public Nullable<bool> Status { get; set; }
+        public int Id { get; set; }
+        public string UserId { get; set; }
+        public string ClaimType { get; set; }
+        public string ClaimValue { get; set; }
+    
+        public virtual AspNetUser AspNetUser { get; set; }
     }
 }
