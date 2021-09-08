@@ -8,111 +8,109 @@ using System.Web;
 using System.Web.Mvc;
 using SMS_3.Models;
 
-namespace SMS_3.Controllers.Tutors
+namespace SMS_3.Controllers.Account
 {
-    [Authorize(Roles = "Admin,Tutor")]
-    public class TutorController : Controller
+    public class UsersController : Controller
     {
         private StudentManagementSystemEntities db = new StudentManagementSystemEntities();
 
-        // GET: Tutor
+        // GET: Users
         public ActionResult Index()
         {
-            return View(db.Tutors.ToList());
+            return View(db.AspNetUsers.ToList());
         }
 
-        // GET: Tutor/Details/5
-        public ActionResult Details(Guid? id)
+        // GET: Users/Details/5
+        public ActionResult Details(string id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Tutor tutor = db.Tutors.Find(id);
-            if (tutor == null)
+            AspNetUser aspNetUser = db.AspNetUsers.Find(id);
+            if (aspNetUser == null)
             {
                 return HttpNotFound();
             }
-            return View(tutor);
+            return View(aspNetUser);
         }
 
-        // GET: Tutor/Create
+        // GET: Users/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: Tutor/Create
+        // POST: Users/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "TutorId,Tutorname,Tutoremail,Qualification,Phone,Status")] Tutor tutor)
+        public ActionResult Create([Bind(Include = "Id,Email,EmailConfirmed,PasswordHash,SecurityStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEndDateUtc,LockoutEnabled,AccessFailedCount,UserName")] AspNetUser aspNetUser)
         {
             if (ModelState.IsValid)
             {
-                tutor.TutorId = Guid.NewGuid();
-                db.Tutors.Add(tutor);
+                db.AspNetUsers.Add(aspNetUser);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(tutor);
+            return View(aspNetUser);
         }
 
-        // GET: Tutor/Edit/5
-        public ActionResult Edit(Guid? id)
+        // GET: Users/Edit/5
+        public ActionResult Edit(string id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Tutor tutor = db.Tutors.Find(id);
-            if (tutor == null)
+            AspNetUser aspNetUser = db.AspNetUsers.Find(id);
+            if (aspNetUser == null)
             {
                 return HttpNotFound();
             }
-            return View(tutor);
+            return View(aspNetUser);
         }
 
-        // POST: Tutor/Edit/5
+        // POST: Users/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "TutorId,Tutorname,Tutoremail,Qualification,Phone,Status")] Tutor tutor)
+        public ActionResult Edit([Bind(Include = "Id,Email,EmailConfirmed,PasswordHash,SecurityStamp,PhoneNumber,PhoneNumberConfirmed,TwoFactorEnabled,LockoutEndDateUtc,LockoutEnabled,AccessFailedCount,UserName")] AspNetUser aspNetUser)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(tutor).State = EntityState.Modified;
+                db.Entry(aspNetUser).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(tutor);
+            return View(aspNetUser);
         }
 
-        // GET: Tutor/Delete/5
-        public ActionResult Delete(Guid? id)
+        // GET: Users/Delete/5
+        public ActionResult Delete(string id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Tutor tutor = db.Tutors.Find(id);
-            if (tutor == null)
+            AspNetUser aspNetUser = db.AspNetUsers.Find(id);
+            if (aspNetUser == null)
             {
                 return HttpNotFound();
             }
-            return View(tutor);
+            return View(aspNetUser);
         }
 
-        // POST: Tutor/Delete/5
+        // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(Guid id)
+        public ActionResult DeleteConfirmed(string id)
         {
-            Tutor tutor = db.Tutors.Find(id);
-            db.Tutors.Remove(tutor);
+            AspNetUser aspNetUser = db.AspNetUsers.Find(id);
+            db.AspNetUsers.Remove(aspNetUser);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

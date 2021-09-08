@@ -12,8 +12,6 @@ namespace SMS_3.Models
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
-    using System.Data.Entity.Core.Objects;
-    using System.Linq;
     
     public partial class StudentManagementSystemEntities : DbContext
     {
@@ -27,28 +25,13 @@ namespace SMS_3.Models
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<Course> Courses { get; set; }
-        public virtual DbSet<Login> Logins { get; set; }
-        public virtual DbSet<Role> Roles { get; set; }
-        public virtual DbSet<StRegisteredCours> StRegisteredCourses { get; set; }
-        public virtual DbSet<student> students { get; set; }
-        public virtual DbSet<Tutor> Tutors { get; set; }
         public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
         public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
-    
-        public virtual ObjectResult<LoginByUsernamePassword_Result> LoginByUsernamePassword(string username, string password)
-        {
-            var usernameParameter = username != null ?
-                new ObjectParameter("username", username) :
-                new ObjectParameter("username", typeof(string));
-    
-            var passwordParameter = password != null ?
-                new ObjectParameter("password", password) :
-                new ObjectParameter("password", typeof(string));
-    
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<LoginByUsernamePassword_Result>("LoginByUsernamePassword", usernameParameter, passwordParameter);
-        }
+        public virtual DbSet<Course> Courses { get; set; }
+        public virtual DbSet<StRegisteredCours> StRegisteredCourses { get; set; }
+        public virtual DbSet<student> students { get; set; }
+        public virtual DbSet<Tutor> Tutors { get; set; }
     }
 }

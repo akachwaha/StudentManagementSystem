@@ -14,13 +14,14 @@ namespace SMS_3.Controllers.Courses
     {
         private StudentManagementSystemEntities db = new StudentManagementSystemEntities();
 
-        // GET: Courses
+        [Authorize(Roles ="Admin,Tutor,Student")]
         public ActionResult Index()
         {
             return View(db.Courses.ToList());
         }
 
-        // GET: Courses/Details/5
+
+        [Authorize(Roles = "Admin,Tutor,Student")]
         public ActionResult Details(Guid? id)
         {
             if (id == null)
@@ -35,7 +36,7 @@ namespace SMS_3.Controllers.Courses
             return View(course);
         }
 
-        // GET: Courses/Create
+        [Authorize(Roles = "Admin,Tutor")]
         public ActionResult Create()
         {
             return View();
@@ -46,6 +47,7 @@ namespace SMS_3.Controllers.Courses
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Tutor")]
         public ActionResult Create(CourseModel courseModel)
         {
             Course course = new Course() //input validation and binding with sql data
@@ -68,7 +70,7 @@ namespace SMS_3.Controllers.Courses
             return View(course);
         }
 
-        // GET: Courses/Edit/5
+        [Authorize(Roles = "Admin,Tutor")]
         public ActionResult Edit(Guid? id)
         {
             if (id == null)
@@ -88,6 +90,7 @@ namespace SMS_3.Controllers.Courses
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Tutor")]
         public ActionResult Edit([Bind(Include = "CourseId,CourseName,Duration,fees,Description,CourseCode")] Course course)
         {
             if (ModelState.IsValid)
@@ -99,7 +102,7 @@ namespace SMS_3.Controllers.Courses
             return View(course);
         }
 
-        // GET: Courses/Delete/5
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(Guid? id)
         {
             if (id == null)
@@ -117,6 +120,7 @@ namespace SMS_3.Controllers.Courses
         // POST: Courses/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public ActionResult DeleteConfirmed(Guid id)
         {
             Course course = db.Courses.Find(id);

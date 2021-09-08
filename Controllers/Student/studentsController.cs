@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using SMS_3.Models;
+using SMS_3.Models.Contracts;
 
 namespace SMS_3.Controllers.Student
 {
+    [Authorize(Roles = "Admin.Student")]
     public class studentsController : Controller
     {
         private StudentManagementSystemEntities db = new StudentManagementSystemEntities();
@@ -46,17 +46,44 @@ namespace SMS_3.Controllers.Student
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "StudentID,StudentRegistrationNumber,Firstname,Lastname,DateofBirth,Fathername,Email,Phone,StudentAddress,Status,Qualification")] student student)
+        public ActionResult Create(StudentViewModel student)
         {
+
             if (ModelState.IsValid)
             {
-                student.StudentID = Guid.NewGuid();
-                db.students.Add(student);
+                student studentDBModel = new student
+                {
+                    DateofBirth = student.DateofBirth,
+                    Email = student.Email,
+                    Fathername = student.Fathername,
+                    Firstname = student.Firstname,
+                    JoiningDate = DateTime.Now,
+                    Lastname = student.Lastname,
+                    Phone = student.Phone,
+                    Qualification = student.Phone,
+                    Status = true,
+                    StudentAddress = student.StudentAddress,
+                    StudentRegistrationNumber = "ST" + GenerateNewRandom(),
+                    StudentID = Guid.NewGuid()
+                };
+
+
+                db.students.Add(studentDBModel);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
             return View(student);
+        }
+        private static string GenerateNewRandom()
+        {
+            Random generator = new Random();
+            String r = generator.Next(0, 1000000).ToString("D6");
+            if (r.Distinct().Count() == 1)
+            {
+                r = GenerateNewRandom();
+            }
+            return r;
         }
 
         // GET: students/Edit/5
@@ -115,6 +142,49 @@ namespace SMS_3.Controllers.Student
             db.SaveChanges();
             return RedirectToAction("Index");
         }
+
+
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult StudentReports(string coursename, string studentname)
+        {
+            using (StudentManagementSystemEntities managementSystemEntities = new StudentManagementSystemEntities())
+            {
+                List<string> coursesList = new List<string> { "All" };
+                List<string> studentsList = new List<string> { "All" };
+                var courseNames = managementSystemEntities.Courses.Select(a => a.CourseName).ToList();
+                coursesList.AddRange(courseNames);
+                ViewBag.Courses = coursesList;
+
+                var studentsRecords = managementSystemEntities.students.Select(a => a.Firstname + " " + a.Lastname).Distinct().ToList();
+                studentsList.AddRange(studentsRecords);
+
+                ViewBag.Students = studentsList;
+
+                if (coursename == "All" && studentname == "All")
+                {
+                    var studentRegisteredCourses = (from str in managementSystemEntities.StRegisteredCourses
+                                                   join students in managementSystemEntities.students on str.StudentID equals students.StudentID
+                                                   join course in managementSystemEntities.Courses on str.CourseId equals course.CourseId
+                                                   select new StudentReports
+                                                   {
+                                                       StudentRegistrationNumber = students.StudentRegistrationNumber,
+                                                       StudentName = students.Firstname + " " + students.Lastname,
+                                                       CourseName = course.CourseName,
+                                                       CourseCode = course.CourseCode
+                                                   }).ToList();
+                    return View(studentRegisteredCourses);
+                }
+            }
+
+
+
+            return View();
+        }
+
+
+
+
 
         protected override void Dispose(bool disposing)
         {

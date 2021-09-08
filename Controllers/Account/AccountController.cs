@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using SMS_3.Models;
 using StudentManagementSystem.Models;
 
 namespace StudentManagementSystem.Controllers
@@ -136,6 +137,9 @@ namespace StudentManagementSystem.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
+            StudentManagementSystemEntities _context = new StudentManagementSystemEntities();
+            ViewBag.Name = new SelectList(_context.AspNetRoles.ToList(), "Name", "Name");
+
             return View();
         }
 
@@ -150,16 +154,22 @@ namespace StudentManagementSystem.Controllers
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                 var result = await UserManager.CreateAsync(user, model.Password);
+                
                 if (result.Succeeded)
                 {
+                    await UserManager.AddToRoleAsync(user.Id, model.RoleName);
+
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
+                    if (model.RoleName=="Student")
+                    {
+                        return RedirectToAction("Create", "students");
+                    }
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);

@@ -19,6 +19,6 @@ namespace SMS_3.Models
         public string Tutoremail { get; set; }
         public string Qualification { get; set; }
         public string Phone { get; set; }
-        public Nullable<bool> Status { get; set; }
+        public string Status { get; set; }
     }
 }
