@@ -11,30 +11,15 @@ namespace SMS_3.Models
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
-
+    
     public partial class student
     {
         public System.Guid StudentID { get; set; }
-
-        [Display(Name ="Registration Number")]
         public string StudentRegistrationNumber { get; set; }
-
-        [Display(Name = "First Name")]
         public string Firstname { get; set; }
-
-        [Display(Name = "Last Name")]
         public string Lastname { get; set; }
-       
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public System.DateTime DateofBirth { get; set; }
-
-        [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public System.DateTime JoiningDate { get; set; }
-
-        [Display(Name = "Father Name")]
         public string Fathername { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }

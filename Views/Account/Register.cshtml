@@ -32,7 +32,9 @@
     <div class="form-group">
         @Html.LabelFor(m => m.RoleName, new { @class = "col-md-2 control-label" })
         <div class="col-md-10">
-            @Html.DropDownListFor(m => m.RoleName, (IEnumerable<SelectListItem>)ViewBag.Name, new { @class = "form-control" })
+            @*@Html.DropDownListFor(m => m.RoleName, (IEnumerable<SelectListItem>)ViewBag.Name, new { @class = "form-control" })*@
+            @Html.DropDownList("RoleName", new SelectList(ViewBag.Name))
+
         </div>
     </div>
 

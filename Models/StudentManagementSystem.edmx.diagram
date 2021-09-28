@@ -4,19 +4,22 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="fe9f35a87c2c4b58a2484ec2032fa7ee" Name="Diagram1">
+      <Diagram DiagramId="804a7648e9c74bd5a5e2a3166e252dee" Name="Diagram1">
         <EntityTypeShape EntityType="StudentManagementSystemModel.AspNetRole" Width="1.5" PointX="0.75" PointY="2.5" IsExpanded="true" />
         <EntityTypeShape EntityType="StudentManagementSystemModel.AspNetUserClaim" Width="1.5" PointX="5.25" PointY="1" IsExpanded="true" />
         <EntityTypeShape EntityType="StudentManagementSystemModel.AspNetUserLogin" Width="1.5" PointX="5.25" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="StudentManagementSystemModel.AspNetUser" Width="1.5" PointX="3" PointY="1.375" IsExpanded="true" />
         <EntityTypeShape EntityType="StudentManagementSystemModel.Course" Width="1.5" PointX="0.75" PointY="7" IsExpanded="true" />
-        <EntityTypeShape EntityType="StudentManagementSystemModel.StRegisteredCours" Width="1.5" PointX="3" PointY="7" IsExpanded="true" />
-        <EntityTypeShape EntityType="StudentManagementSystemModel.student" Width="1.5" PointX="5.75" PointY="6.75" IsExpanded="true" />
         <EntityTypeShape EntityType="StudentManagementSystemModel.Tutor" Width="1.5" PointX="7.75" PointY="0.75" IsExpanded="true" />
         <AssociationConnector Association="StudentManagementSystemModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
         <AssociationConnector Association="StudentManagementSystemModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" ManuallyRouted="false" />
-        <AssociationConnector Association="StudentManagementSystemModel.FK_CourseId" ManuallyRouted="false" />
         <AssociationConnector Association="StudentManagementSystemModel.AspNetUserRoles" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="StudentManagementSystemModel.TutorCourseMapping" Width="1.5" PointX="10" PointY="4.125" />
+        <AssociationConnector Association="StudentManagementSystemModel.FK_TCourseId" />
+        <AssociationConnector Association="StudentManagementSystemModel.FK_TCTutorID" />
+        <EntityTypeShape EntityType="StudentManagementSystemModel.StRegisteredCours" Width="1.5" PointX="3" PointY="7" />
+        <AssociationConnector Association="StudentManagementSystemModel.FK_CourseId" />
+        <EntityTypeShape EntityType="StudentManagementSystemModel.student" Width="1.5" PointX="5.375" PointY="6.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

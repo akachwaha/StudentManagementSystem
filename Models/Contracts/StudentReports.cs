@@ -6,7 +6,7 @@ using System.Web;
 
 namespace SMS_3.Models.Contracts
 {
-    public class StudentReports : IEnumerable<StudentReports>
+    public class StudentReports
     {
         public string StudentName { get; set; }
 
@@ -16,14 +16,6 @@ namespace SMS_3.Models.Contracts
 
         public string CourseCode { get; set; }
 
-        public IEnumerator<StudentReports> GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }

@@ -9,7 +9,7 @@ using SMS_3.Models.Contracts;
 
 namespace SMS_3.Controllers.Student
 {
-    [Authorize(Roles = "Admin.Student")]
+    //[Authorize(Roles = "Admin.Student")]
     public class studentsController : Controller
     {
         private StudentManagementSystemEntities db = new StudentManagementSystemEntities();
@@ -146,8 +146,9 @@ namespace SMS_3.Controllers.Student
 
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult StudentReports(string coursename, string studentname)
+        public ActionResult StudentReports(string Course, string Student)
         {
+            List<StudentReports> studentRegisteredCourses = new List<StudentReports>();
             using (StudentManagementSystemEntities managementSystemEntities = new StudentManagementSystemEntities())
             {
                 List<string> coursesList = new List<string> { "All" };
@@ -161,25 +162,71 @@ namespace SMS_3.Controllers.Student
 
                 ViewBag.Students = studentsList;
 
-                if (coursename == "All" && studentname == "All")
+                if (Course == "All" && Student == "All")
                 {
-                    var studentRegisteredCourses = (from str in managementSystemEntities.StRegisteredCourses
-                                                   join students in managementSystemEntities.students on str.StudentID equals students.StudentID
-                                                   join course in managementSystemEntities.Courses on str.CourseId equals course.CourseId
-                                                   select new StudentReports
-                                                   {
-                                                       StudentRegistrationNumber = students.StudentRegistrationNumber,
-                                                       StudentName = students.Firstname + " " + students.Lastname,
-                                                       CourseName = course.CourseName,
-                                                       CourseCode = course.CourseCode
-                                                   }).ToList();
+                    studentRegisteredCourses = (from str in managementSystemEntities.StRegisteredCourses
+                                                join students in managementSystemEntities.students on str.StudentRegistrationNumber equals students.StudentRegistrationNumber
+                                                join course in managementSystemEntities.Courses on str.CourseId equals course.CourseId
+                                                select new StudentReports
+                                                {
+                                                    StudentRegistrationNumber = students.StudentRegistrationNumber,
+                                                    StudentName = students.Firstname + " " + students.Lastname,
+                                                    CourseName = course.CourseName,
+                                                    CourseCode = course.CourseCode
+                                                }).ToList();
                     return View(studentRegisteredCourses);
                 }
+                else if (Student == "All" && Course != "All")
+                {
+
+                    studentRegisteredCourses = (from str in managementSystemEntities.StRegisteredCourses
+                                                join students in managementSystemEntities.students on str.StudentRegistrationNumber equals students.StudentRegistrationNumber
+                                                join course in managementSystemEntities.Courses on str.CourseId equals course.CourseId
+                                                where course.CourseName == Course 
+                                                select new StudentReports
+                                                {
+                                                    StudentRegistrationNumber = students.StudentRegistrationNumber,
+                                                    StudentName = students.Firstname + " " + students.Lastname,
+                                                    CourseName = course.CourseName,
+                                                    CourseCode = course.CourseCode
+
+                                                }).ToList();
+                }
+                else if (Student!= "All" && Course == "All")
+                {
+                     studentRegisteredCourses = (from str in managementSystemEntities.StRegisteredCourses
+                                                     join students in managementSystemEntities.students on str.StudentRegistrationNumber equals students.StudentRegistrationNumber
+                                                 join course in managementSystemEntities.Courses on str.CourseId equals course.CourseId
+                                                     where students.Firstname + " " + students.Lastname == Student
+                                                     select new StudentReports
+                                                     {
+                                                         StudentRegistrationNumber = students.StudentRegistrationNumber,
+                                                         StudentName = students.Firstname + " " + students.Lastname,
+                                                         CourseName = course.CourseName,
+                                                         CourseCode = course.CourseCode
+                                                     }).ToList();
+                }
+                else
+                {
+                     studentRegisteredCourses = (from str in managementSystemEntities.StRegisteredCourses
+                                                     join students in managementSystemEntities.students on str.StudentRegistrationNumber equals students.StudentRegistrationNumber
+                                                 join course in managementSystemEntities.Courses on str.CourseId equals course.CourseId
+                                                     where course.CourseName == Course && students.Firstname + " " + students.Lastname == Student
+                                                     select new StudentReports
+                                                     {
+                                                         StudentRegistrationNumber = students.StudentRegistrationNumber,
+                                                         StudentName = students.Firstname + " " + students.Lastname,
+                                                         CourseName = course.CourseName,
+                                                         CourseCode = course.CourseCode
+
+
+
+                                                     }).ToList();
+
+                }
+                return View(studentRegisteredCourses);
+
             }
-
-
-
-            return View();
         }
 
 

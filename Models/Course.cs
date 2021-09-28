@@ -17,6 +17,7 @@ namespace SMS_3.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Course()
         {
+            this.TutorCourseMappings = new HashSet<TutorCourseMapping>();
             this.StRegisteredCourses = new HashSet<StRegisteredCours>();
         }
     
@@ -27,6 +28,8 @@ namespace SMS_3.Models
         public string Description { get; set; }
         public string CourseCode { get; set; }
     
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TutorCourseMapping> TutorCourseMappings { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<StRegisteredCours> StRegisteredCourses { get; set; }
     }

@@ -4,9 +4,11 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
 using System.Web;
 using System.Web.Mvc;
 using SMS_3.Models;
+using SMS_3.Models.Contracts;
 
 namespace SMS_3.Controllers.Registered_Course
 {
@@ -37,10 +39,26 @@ namespace SMS_3.Controllers.Registered_Course
         }
 
         // GET: StRegisteredCours/Create
-        public ActionResult Create()
+      
+        public ActionResult Create(Guid id)
         {
-            ViewBag.CourseId = new SelectList(db.Courses, "CourseId", "CourseName");
-            return View();
+            StRegisterCourseViewModel viewModelData = (from tc in db.TutorCourseMappings
+                                 join str in db.Courses on tc.CourseId equals str.CourseId
+                                 join t in db.Tutors on tc.TutorId equals t.TutorId
+                                 where str.CourseId == id
+                                 select new StRegisterCourseViewModel
+                                 {
+                                     CourseName = str.CourseName,
+                                     Duration = str.Duration,
+                                     TutorName = t.Tutorname,
+                                     Fees = str.fees.ToString()
+
+                                 }).FirstOrDefault();
+
+            return View(viewModelData);
+
+            //ViewBag.CourseId = new SelectList(db.Courses, "CourseId", "CourseName");
+            //return View();
         }
 
         // POST: StRegisteredCours/Create
@@ -48,18 +66,76 @@ namespace SMS_3.Controllers.Registered_Course
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "CourseRegistrationId,CourseId,StudentID,CreatedDate,CreatedBy,UpdatedDate,UpdatedBy")] StRegisteredCours stRegisteredCours)
+        //public ActionResult Create([Bind(Include = "CourseRegistrationId,CourseId,StudentID,CreatedDate,CreatedBy,UpdatedDate,UpdatedBy")] StRegisteredCours stRegisteredCours)
+        public ActionResult Create([Bind]StRegisterCourseViewModel stRegisterCourseViewModel)
         {
             if (ModelState.IsValid)
             {
-                stRegisteredCours.CourseRegistrationId = Guid.NewGuid();
-                db.StRegisteredCourses.Add(stRegisteredCours);
-                db.SaveChanges();
+                var courseId = db.Courses.FirstOrDefault(a => a.CourseName == stRegisterCourseViewModel.CourseName).CourseId;
+                StRegisteredCours stRegisteredCours = new StRegisteredCours
+                {
+                    CourseId = courseId,
+                    CourseRegistrationId = Guid.NewGuid(),
+                    CreatedDate = DateTime.Now,
+                    StudentRegistrationNumber = stRegisterCourseViewModel.StudentID
+                };
+
+                //stRegisteredCours.CreatedDate = DateTime.Now;
+                //stRegisteredCours.CourseRegistrationId = Guid.NewGuid();
+                var data = db.StRegisteredCourses.FirstOrDefault(a => a.Course == stRegisteredCours.Course && a.StudentRegistrationNumber == stRegisteredCours.StudentRegistrationNumber);
+                if (data != null)
+                {
+                    db.StRegisteredCourses.Add(stRegisteredCours);
+                    db.SaveChanges();
+
+                    student studentdetails = db.students.FirstOrDefault(a => a.StudentRegistrationNumber == stRegisteredCours.StudentRegistrationNumber);
+                    Course coursedetails = db.Courses.FirstOrDefault(a => a.CourseId == stRegisteredCours.CourseId);                    
+                    ViewBag.CourseId = new SelectList(db.Courses, "CourseId", "CourseName", stRegisteredCours.CourseId);
+                    var fromAddress = new MailAddress("gv9914667@gmail.com", "gv9914667@gmail.com");
+                    var toAddress = new MailAddress(studentdetails.Email, studentdetails.Email);
+                    const string fromPassword = "20.July.93";//"k_4A2aecT27WYXGCztsQGJi8BYuBr0R136ltw44";
+                    const string subject = "Student Management COurse registration email";
+                    string body = $"{studentdetails.Firstname} {studentdetails.Lastname} is registered to the course {coursedetails.CourseName}. Fee amount - { coursedetails.fees}";
+
+
+
+                    var smtp = new SmtpClient()
+                    {
+                        Host = "smtp.gmail.com",
+                        Port = 587,
+                        EnableSsl = true,
+                        DeliveryMethod = SmtpDeliveryMethod.Network,
+                        UseDefaultCredentials = false,
+                        Credentials = new NetworkCredential(fromAddress.Address, fromPassword),
+                        //Timeout = 20000
+                    };
+
+                    try
+                    {
+                        using (var message = new MailMessage(fromAddress, toAddress)
+                        {
+                            Subject = subject,
+                            Body = body,
+                        })
+                        {
+                            smtp.Send(message);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                        throw;
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("Duplicate entry", "student is already registered to this course. please select proper course for registration");
+                    return View();
+                }
                 return RedirectToAction("Index");
             }
 
-            ViewBag.CourseId = new SelectList(db.Courses, "CourseId", "CourseName", stRegisteredCours.CourseId);
-            return View(stRegisteredCours);
+            return View();
         }
 
         // GET: StRegisteredCours/Edit/5

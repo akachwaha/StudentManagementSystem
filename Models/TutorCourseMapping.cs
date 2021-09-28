@@ -12,16 +12,13 @@ namespace SMS_3.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class StRegisteredCours
+    public partial class TutorCourseMapping
     {
-        public System.Guid CourseRegistrationId { get; set; }
+        public System.Guid TutorCourseId { get; set; }
+        public System.Guid TutorId { get; set; }
         public System.Guid CourseId { get; set; }
-        public string StudentRegistrationNumber { get; set; }
-        public Nullable<System.DateTime> CreatedDate { get; set; }
-        public Nullable<System.Guid> CreatedBy { get; set; }
-        public Nullable<System.DateTime> UpdatedDate { get; set; }
-        public Nullable<System.Guid> UpdatedBy { get; set; }
     
         public virtual Course Course { get; set; }
+        public virtual Tutor Tutor { get; set; }
     }
 }

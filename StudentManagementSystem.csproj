@@ -194,7 +194,8 @@
     <Compile Include="Models\Contracts\CourseModel.cs" />
     <Compile Include="Models\Contracts\IdentityModels.cs" />
     <Compile Include="Models\Contracts\ManageViewModels.cs" />
-    <Compile Include="Models\Contracts\StudentReposrts.cs" />
+    <Compile Include="Models\Contracts\StRegisterCourseViewModel.cs" />
+    <Compile Include="Models\Contracts\StudentReports.cs" />
     <Compile Include="Models\Contracts\StudentViewModel.cs" />
     <Compile Include="Models\Course.cs">
       <DependentUpon>StudentManagementSystem.tt</DependentUpon>
@@ -221,6 +222,9 @@
       <DependentUpon>StudentManagementSystem.edmx</DependentUpon>
     </Compile>
     <Compile Include="Models\Tutor.cs">
+      <DependentUpon>StudentManagementSystem.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\TutorCourseMapping.cs">
       <DependentUpon>StudentManagementSystem.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -389,4 +393,11 @@
   </Target>
   <Target Name="AfterBuild">
   </Target> -->
+  <Target Name="CopyRoslynFiles" AfterTargets="AfterBuild" Condition="!$(Disable_CopyWebApplication) And '$(OutDir)' != '$(OutputPath)'">
+    <ItemGroup>
+      <RoslynFiles Include="$(CscToolPath)\*" />
+    </ItemGroup>
+    <MakeDir Directories="$(WebProjectOutputDir)\bin\roslyn" />
+    <Copy SourceFiles="@(RoslynFiles)" DestinationFolder="$(WebProjectOutputDir)\bin\roslyn" SkipUnchangedFiles="true" Retries="$(CopyRetryCount)" RetryDelayMilliseconds="$(CopyRetryDelayMilliseconds)" />
+  </Target>
 </Project>

@@ -14,7 +14,7 @@ namespace SMS_3.Controllers.Courses
     {
         private StudentManagementSystemEntities db = new StudentManagementSystemEntities();
 
-        [Authorize(Roles ="Admin,Tutor,Student")]
+        //[Authorize(Roles ="Admin,Tutor,Student")]
         public ActionResult Index()
         {
             return View(db.Courses.ToList());
@@ -34,6 +34,11 @@ namespace SMS_3.Controllers.Courses
                 return HttpNotFound();
             }
             return View(course);
+        }
+        [Authorize(Roles = "Admin,Tutor,Student")]
+        public ActionResult Register(Guid? id)
+        {
+            return RedirectToAction("Create", "StRegisteredCours", new { id = id });
         }
 
         [Authorize(Roles = "Admin,Tutor")]

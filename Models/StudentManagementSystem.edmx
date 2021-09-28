@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="StudentManagementSystemModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="StudentManagementSystemModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AspNetRoles">
           <Key>
             <PropertyRef Name="Id" />
@@ -73,7 +73,7 @@
           </Key>
           <Property Name="CourseRegistrationId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="CourseId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="StudentID" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="StudentRegistrationNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime" />
           <Property Name="CreatedBy" Type="uniqueidentifier" />
           <Property Name="UpdatedDate" Type="datetime" />
@@ -106,6 +106,14 @@
           <Property Name="Qualification" Type="nvarchar" MaxLength="150" />
           <Property Name="Phone" Type="nvarchar" MaxLength="50" />
           <Property Name="Status" Type="nvarchar" MaxLength="15" />
+        </EntityType>
+        <EntityType Name="TutorCourseMapping">
+          <Key>
+            <PropertyRef Name="TutorCourseId" />
+          </Key>
+          <Property Name="TutorCourseId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="TutorId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="CourseId" Type="uniqueidentifier" Nullable="false" />
         </EntityType>
         <Association Name="FK_CourseId">
           <End Role="Course" Type="Self.Course" Multiplicity="1">
@@ -177,6 +185,34 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_TCourseId">
+          <End Role="Course" Type="Self.Course" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TutorCourseMapping" Type="Self.TutorCourseMapping" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Course">
+              <PropertyRef Name="CourseId" />
+            </Principal>
+            <Dependent Role="TutorCourseMapping">
+              <PropertyRef Name="CourseId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TCTutorID">
+          <End Role="Tutor" Type="Self.Tutor" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="TutorCourseMapping" Type="Self.TutorCourseMapping" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tutor">
+              <PropertyRef Name="TutorId" />
+            </Principal>
+            <Dependent Role="TutorCourseMapping">
+              <PropertyRef Name="TutorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="StudentManagementSystemModelStoreContainer">
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" Schema="dbo" store:Type="Tables" />
@@ -187,6 +223,7 @@
           <EntitySet Name="StRegisteredCourses" EntityType="Self.StRegisteredCourses" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="student" EntityType="Self.student" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tutor" EntityType="Self.Tutor" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TutorCourseMapping" EntityType="Self.TutorCourseMapping" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_CourseId" Association="Self.FK_CourseId">
             <End Role="Course" EntitySet="Course" />
             <End Role="StRegisteredCourses" EntitySet="StRegisteredCourses" />
@@ -207,9 +244,16 @@
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
           </AssociationSet>
+          <AssociationSet Name="FK_TCourseId" Association="Self.FK_TCourseId">
+            <End Role="Course" EntitySet="Course" />
+            <End Role="TutorCourseMapping" EntitySet="TutorCourseMapping" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TCTutorID" Association="Self.FK_TCTutorID">
+            <End Role="Tutor" EntitySet="Tutor" />
+            <End Role="TutorCourseMapping" EntitySet="TutorCourseMapping" />
+          </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="StudentManagementSystemModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -272,37 +316,8 @@
           <Property Name="fees" Type="Int32" />
           <Property Name="Description" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="CourseCode" Type="String" MaxLength="8" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="StRegisteredCourses" Relationship="Self.FK_CourseId" FromRole="Course" ToRole="StRegisteredCourses" />
-        </EntityType>
-        <EntityType Name="StRegisteredCours">
-          <Key>
-            <PropertyRef Name="CourseRegistrationId" />
-          </Key>
-          <Property Name="CourseRegistrationId" Type="Guid" Nullable="false" />
-          <Property Name="CourseId" Type="Guid" Nullable="false" />
-          <Property Name="StudentID" Type="Guid" Nullable="false" />
-          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
-          <Property Name="CreatedBy" Type="Guid" />
-          <Property Name="UpdatedDate" Type="DateTime" Precision="3" />
-          <Property Name="UpdatedBy" Type="Guid" />
-          <NavigationProperty Name="Course" Relationship="Self.FK_CourseId" FromRole="StRegisteredCourses" ToRole="Course" />
-        </EntityType>
-        <EntityType Name="student">
-          <Key>
-            <PropertyRef Name="StudentID" />
-          </Key>
-          <Property Name="StudentID" Type="Guid" Nullable="false" />
-          <Property Name="StudentRegistrationNumber" Type="String" MaxLength="15" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Firstname" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Lastname" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Name="DateofBirth" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="JoiningDate" Type="DateTime" Nullable="false" Precision="0" />
-          <Property Name="Fathername" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Name="Email" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Phone" Type="String" MaxLength="10" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="StudentAddress" Type="String" MaxLength="150" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Status" Type="Boolean" />
-          <Property Name="Qualification" Type="String" MaxLength="30" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="TutorCourseMappings" Relationship="StudentManagementSystemModel.FK_TCourseId" FromRole="Course" ToRole="TutorCourseMapping" />
+          <NavigationProperty Name="StRegisteredCourses" Relationship="StudentManagementSystemModel.FK_CourseId" FromRole="Course" ToRole="StRegisteredCours" />
         </EntityType>
         <EntityType Name="Tutor">
           <Key>
@@ -314,6 +329,7 @@
           <Property Name="Qualification" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="Phone" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="Status" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="TutorCourseMappings" Relationship="StudentManagementSystemModel.FK_TCTutorID" FromRole="Tutor" ToRole="TutorCourseMapping" />
         </EntityType>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
           <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1">
@@ -343,20 +359,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_CourseId">
-          <End Role="Course" Type="Self.Course" Multiplicity="1">
-            <OnDelete Action="Cascade" />
-          </End>
-          <End Role="StRegisteredCourses" Type="Self.StRegisteredCours" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Course">
-              <PropertyRef Name="CourseId" />
-            </Principal>
-            <Dependent Role="StRegisteredCourses">
-              <PropertyRef Name="CourseId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="AspNetUserRoles">
           <End Role="AspNetRoles" Type="Self.AspNetRole" Multiplicity="*" />
           <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="*" />
@@ -367,8 +369,6 @@
           <EntitySet Name="AspNetUserLogins" EntityType="Self.AspNetUserLogin" />
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUser" />
           <EntitySet Name="Courses" EntityType="Self.Course" />
-          <EntitySet Name="StRegisteredCourses" EntityType="Self.StRegisteredCours" />
-          <EntitySet Name="students" EntityType="Self.student" />
           <EntitySet Name="Tutors" EntityType="Self.Tutor" />
           <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
@@ -378,15 +378,108 @@
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserLogins" EntitySet="AspNetUserLogins" />
           </AssociationSet>
-          <AssociationSet Name="FK_CourseId" Association="Self.FK_CourseId">
-            <End Role="Course" EntitySet="Courses" />
-            <End Role="StRegisteredCourses" EntitySet="StRegisteredCourses" />
-          </AssociationSet>
           <AssociationSet Name="AspNetUserRoles" Association="Self.AspNetUserRoles">
             <End Role="AspNetRoles" EntitySet="AspNetRoles" />
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
           </AssociationSet>
+          <EntitySet Name="TutorCourseMappings" EntityType="StudentManagementSystemModel.TutorCourseMapping" />
+          <AssociationSet Name="FK_TCourseId" Association="StudentManagementSystemModel.FK_TCourseId">
+            <End Role="Course" EntitySet="Courses" />
+            <End Role="TutorCourseMapping" EntitySet="TutorCourseMappings" />
+          </AssociationSet>
+          <AssociationSet Name="FK_TCTutorID" Association="StudentManagementSystemModel.FK_TCTutorID">
+            <End Role="Tutor" EntitySet="Tutors" />
+            <End Role="TutorCourseMapping" EntitySet="TutorCourseMappings" />
+          </AssociationSet>
+          <EntitySet Name="StRegisteredCourses" EntityType="StudentManagementSystemModel.StRegisteredCours" />
+          <AssociationSet Name="FK_CourseId" Association="StudentManagementSystemModel.FK_CourseId">
+            <End Role="Course" EntitySet="Courses" />
+            <End Role="StRegisteredCours" EntitySet="StRegisteredCourses" />
+          </AssociationSet>
+          <EntitySet Name="students" EntityType="StudentManagementSystemModel.student" />
         </EntityContainer>
+        <EntityType Name="TutorCourseMapping">
+          <Key>
+            <PropertyRef Name="TutorCourseId" />
+          </Key>
+          <Property Name="TutorCourseId" Type="Guid" Nullable="false" />
+          <Property Name="TutorId" Type="Guid" Nullable="false" />
+          <Property Name="CourseId" Type="Guid" Nullable="false" />
+          <NavigationProperty Name="Course" Relationship="StudentManagementSystemModel.FK_TCourseId" FromRole="TutorCourseMapping" ToRole="Course" />
+          <NavigationProperty Name="Tutor" Relationship="StudentManagementSystemModel.FK_TCTutorID" FromRole="TutorCourseMapping" ToRole="Tutor" />
+        </EntityType>
+        <Association Name="FK_TCourseId">
+          <End Type="StudentManagementSystemModel.Course" Role="Course" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="StudentManagementSystemModel.TutorCourseMapping" Role="TutorCourseMapping" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Course">
+              <PropertyRef Name="CourseId" />
+            </Principal>
+            <Dependent Role="TutorCourseMapping">
+              <PropertyRef Name="CourseId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_TCTutorID">
+          <End Type="StudentManagementSystemModel.Tutor" Role="Tutor" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="StudentManagementSystemModel.TutorCourseMapping" Role="TutorCourseMapping" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Tutor">
+              <PropertyRef Name="TutorId" />
+            </Principal>
+            <Dependent Role="TutorCourseMapping">
+              <PropertyRef Name="TutorId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="StRegisteredCours">
+          <Key>
+            <PropertyRef Name="CourseRegistrationId" />
+          </Key>
+          <Property Name="CourseRegistrationId" Type="Guid" Nullable="false" />
+          <Property Name="CourseId" Type="Guid" Nullable="false" />
+          <Property Name="StudentRegistrationNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedDate" Type="DateTime" Precision="3" />
+          <Property Name="CreatedBy" Type="Guid" />
+          <Property Name="UpdatedDate" Type="DateTime" Precision="3" />
+          <Property Name="UpdatedBy" Type="Guid" />
+          <NavigationProperty Name="Course" Relationship="StudentManagementSystemModel.FK_CourseId" FromRole="StRegisteredCours" ToRole="Course" />
+        </EntityType>
+        <Association Name="FK_CourseId">
+          <End Type="StudentManagementSystemModel.Course" Role="Course" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="StudentManagementSystemModel.StRegisteredCours" Role="StRegisteredCours" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Course">
+              <PropertyRef Name="CourseId" />
+            </Principal>
+            <Dependent Role="StRegisteredCours">
+              <PropertyRef Name="CourseId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="student">
+          <Key>
+            <PropertyRef Name="StudentID" />
+          </Key>
+          <Property Name="StudentID" Type="Guid" Nullable="false" />
+          <Property Name="StudentRegistrationNumber" Type="String" Nullable="false" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="Firstname" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Lastname" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="DateofBirth" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="JoiningDate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="Fathername" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Phone" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="StudentAddress" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="Boolean" />
+          <Property Name="Qualification" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -450,37 +543,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="StRegisteredCourses">
-            <EntityTypeMapping TypeName="StudentManagementSystemModel.StRegisteredCours">
-              <MappingFragment StoreEntitySet="StRegisteredCourses">
-                <ScalarProperty Name="CourseRegistrationId" ColumnName="CourseRegistrationId" />
-                <ScalarProperty Name="CourseId" ColumnName="CourseId" />
-                <ScalarProperty Name="StudentID" ColumnName="StudentID" />
-                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
-                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="students">
-            <EntityTypeMapping TypeName="StudentManagementSystemModel.student">
-              <MappingFragment StoreEntitySet="student">
-                <ScalarProperty Name="StudentID" ColumnName="StudentID" />
-                <ScalarProperty Name="StudentRegistrationNumber" ColumnName="StudentRegistrationNumber" />
-                <ScalarProperty Name="Firstname" ColumnName="Firstname" />
-                <ScalarProperty Name="Lastname" ColumnName="Lastname" />
-                <ScalarProperty Name="DateofBirth" ColumnName="DateofBirth" />
-                <ScalarProperty Name="JoiningDate" ColumnName="JoiningDate" />
-                <ScalarProperty Name="Fathername" ColumnName="Fathername" />
-                <ScalarProperty Name="Email" ColumnName="Email" />
-                <ScalarProperty Name="Phone" ColumnName="Phone" />
-                <ScalarProperty Name="StudentAddress" ColumnName="StudentAddress" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="Qualification" ColumnName="Qualification" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Tutors">
             <EntityTypeMapping TypeName="StudentManagementSystemModel.Tutor">
               <MappingFragment StoreEntitySet="Tutor">
@@ -501,6 +563,46 @@
               <ScalarProperty Name="Id" ColumnName="UserId" />
             </EndProperty>
           </AssociationSetMapping>
+          <EntitySetMapping Name="TutorCourseMappings">
+            <EntityTypeMapping TypeName="StudentManagementSystemModel.TutorCourseMapping">
+              <MappingFragment StoreEntitySet="TutorCourseMapping">
+                <ScalarProperty Name="CourseId" ColumnName="CourseId" />
+                <ScalarProperty Name="TutorId" ColumnName="TutorId" />
+                <ScalarProperty Name="TutorCourseId" ColumnName="TutorCourseId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="StRegisteredCourses">
+            <EntityTypeMapping TypeName="StudentManagementSystemModel.StRegisteredCours">
+              <MappingFragment StoreEntitySet="StRegisteredCourses">
+                <ScalarProperty Name="UpdatedBy" ColumnName="UpdatedBy" />
+                <ScalarProperty Name="UpdatedDate" ColumnName="UpdatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="StudentRegistrationNumber" ColumnName="StudentRegistrationNumber" />
+                <ScalarProperty Name="CourseId" ColumnName="CourseId" />
+                <ScalarProperty Name="CourseRegistrationId" ColumnName="CourseRegistrationId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="students">
+            <EntityTypeMapping TypeName="StudentManagementSystemModel.student">
+              <MappingFragment StoreEntitySet="student">
+                <ScalarProperty Name="Qualification" ColumnName="Qualification" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="StudentAddress" ColumnName="StudentAddress" />
+                <ScalarProperty Name="Phone" ColumnName="Phone" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Fathername" ColumnName="Fathername" />
+                <ScalarProperty Name="JoiningDate" ColumnName="JoiningDate" />
+                <ScalarProperty Name="DateofBirth" ColumnName="DateofBirth" />
+                <ScalarProperty Name="Lastname" ColumnName="Lastname" />
+                <ScalarProperty Name="Firstname" ColumnName="Firstname" />
+                <ScalarProperty Name="StudentRegistrationNumber" ColumnName="StudentRegistrationNumber" />
+                <ScalarProperty Name="StudentID" ColumnName="StudentID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

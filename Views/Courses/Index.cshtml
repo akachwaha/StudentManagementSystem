@@ -55,37 +55,40 @@
             <td>
                 @if (User.IsInRole("Admin"))
                 {
-                    @Html.ActionLink("Edit", "Edit", new { id = item.CourseId }) 
-                    @Html.ActionLink("Details", "Details", new { id = item.CourseId }) 
+                    @Html.ActionLink("Edit", "Edit", new { id = item.CourseId })
+                    @Html.ActionLink("Details", "Details", new { id = item.CourseId })
                     @Html.ActionLink("Delete", "Delete", new { id = item.CourseId })
                 }
                 @if (User.IsInRole("Tutor"))
                 {
-                    @Html.ActionLink("Edit " + "  |  ", "Edit", new { id = item.CourseId }) 
+                    @Html.ActionLink("Edit " + "  |  ", "Edit", new { id = item.CourseId })
                     @Html.ActionLink("Details", "Details", new { id = item.CourseId })
                 }
 
                 @if (User.IsInRole("Student"))
                 {
                     @Html.ActionLink("Details", "Details", new { id = item.CourseId })
-                    @Html.ActionLink("Register", "Create", "StRegisteredCours")
+                    @*@Html.ActionLink("Register", "Create", "StRegisteredCours")*@
+                    @Html.ActionLink("Register", "Register", new { id = item.CourseId })
+
+
                 }
 
 
-                                        @*@if (User.IsInRole("Tutor") || User.IsInRole("Admin"))
-                                                            {
-                                                                @Html.ActionLink("Edit", "Edit", new { id = item.CourseId }) |
-                                            @Html.ActionLink("Details", "Details", new { id = item.CourseId }) |
-                                                            }
-                                                            @if (User.IsInRole("Admin"))
-                                                                                        {
-                                                                                            @Html.ActionLink("Delete", "Delete", new { id = item.CourseId })
-                                                                                        }*@
+                @*@if (User.IsInRole("Tutor") || User.IsInRole("Admin"))
+                        {
+                            @Html.ActionLink("Edit", "Edit", new { id = item.CourseId }) |
+        @Html.ActionLink("Details", "Details", new { id = item.CourseId }) |
+                        }
+                        @if (User.IsInRole("Admin"))
+                                                    {
+                                                        @Html.ActionLink("Delete", "Delete", new { id = item.CourseId })
+                                                    }*@
 
                 @*@Html.ActionLink("Edit", "Edit", new { id = item.CourseId }) |
-                @Html.ActionLink("Details", "Details", new { id = item.CourseId }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.CourseId })|
-                @Html.ActionLink("Register", "Create", "StRegisteredCours")*@
+        @Html.ActionLink("Details", "Details", new { id = item.CourseId }) |
+        @Html.ActionLink("Delete", "Delete", new { id = item.CourseId })|
+        @Html.ActionLink("Register", "Create", "StRegisteredCours")*@
             </td>
         </tr>
     }

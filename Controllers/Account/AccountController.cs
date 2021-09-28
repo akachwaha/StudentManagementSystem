@@ -138,7 +138,8 @@ namespace StudentManagementSystem.Controllers
         public ActionResult Register()
         {
             StudentManagementSystemEntities _context = new StudentManagementSystemEntities();
-            ViewBag.Name = new SelectList(_context.AspNetRoles.ToList(), "Name", "Name");
+            ViewBag.Name = _context.AspNetRoles.Select(a => a.Name).ToList();
+                //new SelectList(_context.AspNetRoles.ToList(), "Name", "Name");
 
             return View();
         }
@@ -154,9 +155,11 @@ namespace StudentManagementSystem.Controllers
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                 var result = await UserManager.CreateAsync(user, model.Password);
-                
+                StudentManagementSystemEntities _context = new StudentManagementSystemEntities();
+                ViewBag.Name = _context.AspNetRoles.Select(a => a.Name).ToList();
                 if (result.Succeeded)
                 {
+                    
                     await UserManager.AddToRoleAsync(user.Id, model.RoleName);
 
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);

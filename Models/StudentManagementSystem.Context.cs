@@ -30,8 +30,9 @@ namespace SMS_3.Models
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
         public virtual DbSet<Course> Courses { get; set; }
+        public virtual DbSet<Tutor> Tutors { get; set; }
+        public virtual DbSet<TutorCourseMapping> TutorCourseMappings { get; set; }
         public virtual DbSet<StRegisteredCours> StRegisteredCourses { get; set; }
         public virtual DbSet<student> students { get; set; }
-        public virtual DbSet<Tutor> Tutors { get; set; }
     }
 }

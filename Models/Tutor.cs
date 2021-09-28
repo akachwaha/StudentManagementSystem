@@ -14,11 +14,20 @@ namespace SMS_3.Models
     
     public partial class Tutor
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Tutor()
+        {
+            this.TutorCourseMappings = new HashSet<TutorCourseMapping>();
+        }
+    
         public System.Guid TutorId { get; set; }
         public string Tutorname { get; set; }
         public string Tutoremail { get; set; }
         public string Qualification { get; set; }
         public string Phone { get; set; }
         public string Status { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TutorCourseMapping> TutorCourseMappings { get; set; }
     }
 }
