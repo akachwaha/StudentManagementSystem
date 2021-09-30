@@ -7,7 +7,8 @@
 
 <h2>Student's Course Registration Form</h2>
 
-@using (Html.BeginForm("Create", "StRegisteredCours", FormMethod.Post))
+@*@using (Html.BeginForm("Create", "StRegisteredCours", FormMethod.Post))*@
+@using (Html.BeginForm("Create", "StRegisteredCours", FormMethod.Post, new { CourseName = Model.CourseName }))
 {
     @Html.AntiForgeryToken()
 
