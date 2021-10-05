@@ -173,6 +173,7 @@
     <Compile Include="Controllers\Courses\CoursesController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\Registered Course\StRegisteredCoursController.cs" />
+    <Compile Include="Controllers\Registered Course\StRegisteredCoursController_old.cs" />
     <Compile Include="Controllers\Student\studentsController.cs" />
     <Compile Include="Controllers\Tutor\TutorController.cs" />
     <Compile Include="Global.asax.cs">
@@ -312,11 +313,9 @@
     <Content Include="Views\Courses\Details.cshtml" />
     <Content Include="Views\Courses\Edit.cshtml" />
     <Content Include="Views\Courses\Index.cshtml" />
-    <Content Include="Views\StRegisteredCours\Create.cshtml" />
     <Content Include="Views\StRegisteredCours\Delete.cshtml" />
     <Content Include="Views\StRegisteredCours\Details.cshtml" />
     <Content Include="Views\StRegisteredCours\Edit.cshtml" />
-    <Content Include="Views\StRegisteredCours\Index.cshtml" />
     <Content Include="Views\Tutor\Create.cshtml" />
     <Content Include="Views\Tutor\Delete.cshtml" />
     <Content Include="Views\Tutor\Details.cshtml" />
@@ -333,6 +332,8 @@
     <Content Include="Views\Users\Edit.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
     <Content Include="Views\students\StudentReports.cshtml" />
+    <Content Include="Views\StRegisteredCours\Create.cshtml" />
+    <Content Include="Views\StRegisteredCours\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -36,10 +36,11 @@ namespace SMS_3.Controllers.Courses
             return View(course);
         }
         [Authorize(Roles = "Admin,Tutor,Student")]
-        public ActionResult Register(Guid? id)
+        public ActionResult Register(Guid? id, string userEmail)
         {
-            return RedirectToAction("Create", "StRegisteredCours", new { id = id });
+            return RedirectToAction("Create", "StRegisteredCours", new { id = id, userEmail = userEmail });
         }
+
 
         [Authorize(Roles = "Admin,Tutor")]
         public ActionResult Create()

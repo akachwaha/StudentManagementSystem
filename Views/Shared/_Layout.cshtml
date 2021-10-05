@@ -37,7 +37,9 @@
                         }
                         if (User.IsInRole("Student"))
                         {
-                            <li>@Html.ActionLink("Registered Courses", "Create", "StRegisteredCours")</li>
+                           
+                            <li>@Html.ActionLink("Registered Courses", "Index", "StRegisteredCours", routeValues: new { userEmail = User.Identity.Name }, htmlAttributes: new { })</li>
+
                         }
                         else if (User.IsInRole("Admin"))
                         {

@@ -16,6 +16,7 @@ namespace SMS_3.Models.Contracts
 
         public string Duration { get; set; }
         public string Fees { get; set; }
+        public string StudentRegistrationNumber { get; set; }
 
     }
 }

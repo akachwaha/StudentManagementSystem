@@ -68,8 +68,9 @@
                 @if (User.IsInRole("Student"))
                 {
                     @Html.ActionLink("Details", "Details", new { id = item.CourseId })
-                    @*@Html.ActionLink("Register", "Create", "StRegisteredCours")*@
-                    @Html.ActionLink("Register", "Register", new { id = item.CourseId })
+
+                    @Html.ActionLink("  Register", "Register", new { id = item.CourseId, userEmail = User.Identity.Name })
+
 
 
                 }

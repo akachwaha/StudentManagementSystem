@@ -12,35 +12,15 @@ using SMS_3.Models.Contracts;
 
 namespace SMS_3.Controllers.Registered_Course
 {
-    public class StRegisteredCoursController : Controller
+    public class StRegisteredCoursController_old : Controller
     {
         private StudentManagementSystemEntities db = new StudentManagementSystemEntities();
 
         // GET: StRegisteredCours
-        public ActionResult Index2()
+        public ActionResult Index()
         {
-            var StRegisteredCours = db.StRegisteredCourses.Include(s => s.Course);
-            return View(StRegisteredCours.ToList());
-        }
-
-        public ActionResult Index(string userEmail)
-        {
-            var StRegisteredCours = (from str in db.StRegisteredCourses
-                                     join s in db.students on str.StudentRegistrationNumber equals s.StudentRegistrationNumber
-                                     join c in db.Courses on str.CourseId equals c.CourseId
-                                     join tc in db.TutorCourseMappings on str.CourseId equals tc.CourseId
-                                     join t in db.Tutors on tc.TutorId equals t.TutorId
-                                     where s.Email == userEmail
-                                     select new StRegisterCourseViewModel
-                                     {
-                                         CourseName = c.CourseName,
-                                         Duration = c.Duration,
-                                         TutorName = t.Tutorname,
-                                         Fees = c.fees.ToString(),
-                                         StudentID = s.StudentRegistrationNumber
-                                     }).ToList();
-
-            return View(StRegisteredCours.ToList());
+            var stRegisteredCourses = db.StRegisteredCourses.Include(s => s.Course);
+            return View(stRegisteredCourses.ToList());
         }
 
         // GET: StRegisteredCours/Details/5
@@ -50,7 +30,7 @@ namespace SMS_3.Controllers.Registered_Course
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var stRegisteredCours = db.StRegisteredCourses.Find(id);
+            StRegisteredCours stRegisteredCours = db.StRegisteredCourses.Find(id);
             if (stRegisteredCours == null)
             {
                 return HttpNotFound();
@@ -59,27 +39,27 @@ namespace SMS_3.Controllers.Registered_Course
         }
 
         // GET: StRegisteredCours/Create
-        [HttpGet]
-        public ActionResult Create(Guid id, string userEmail)
+      
+        public ActionResult Create(Guid id)
         {
-            ViewBag.CourseId = id;
-            var studentId = db.students.FirstOrDefault(a => a.Email == userEmail).StudentRegistrationNumber;
-            ViewBag.StudentId = studentId;
             StRegisterCourseViewModel viewModelData = (from tc in db.TutorCourseMappings
-                                                       join str in db.Courses on tc.CourseId equals str.CourseId
-                                                       join t in db.Tutors on tc.TutorId equals t.TutorId
-                                                       where str.CourseId == id
-                                                       select new StRegisterCourseViewModel
-                                                       {
-                                                           CourseName = str.CourseName,
-                                                           Duration = str.Duration,
-                                                           TutorName = t.Tutorname,
-                                                           Fees = str.fees.ToString(),
-                                                           StudentID = studentId
+                                 join str in db.Courses on tc.CourseId equals str.CourseId
+                                 join t in db.Tutors on tc.TutorId equals t.TutorId
+                                 where str.CourseId == id
+                                 select new StRegisterCourseViewModel
+                                 {
+                                     CourseName = str.CourseName,
+                                     Duration = str.Duration,
+                                     TutorName = t.Tutorname,
+                                     Fees = str.fees.ToString()
+                                     
 
-                                                       }).FirstOrDefault();
+                                 }).FirstOrDefault();
 
             return View(viewModelData);
+
+            //ViewBag.CourseId = new SelectList(db.Courses, "CourseId", "CourseName");
+            //return View();
         }
 
         // POST: StRegisteredCours/Create
@@ -87,36 +67,38 @@ namespace SMS_3.Controllers.Registered_Course
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(Guid courseId, string studentRegistrationNumber)
+        //public ActionResult Create([Bind(Include = "CourseRegistrationId,CourseId,StudentID,CreatedDate,CreatedBy,UpdatedDate,UpdatedBy")] StRegisteredCours stRegisteredCours)
+        public ActionResult Create(StRegisterCourseViewModel stRegister)
         {
             if (ModelState.IsValid)
             {
-                var stRegisteredCours = new StRegisteredCours
+                var courseId = db.Courses.FirstOrDefault(a => a.CourseName == stRegister.CourseName).CourseId;
+                StRegisteredCours stRegisteredCours = new StRegisteredCours
                 {
                     CourseId = courseId,
                     CourseRegistrationId = Guid.NewGuid(),
                     CreatedDate = DateTime.Now,
-                    StudentRegistrationNumber = studentRegistrationNumber
+                    StudentRegistrationNumber = stRegister.StudentRegistrationNumber
                 };
 
                 //stRegisteredCours.CreatedDate = DateTime.Now;
                 //stRegisteredCours.CourseRegistrationId = Guid.NewGuid();
-                var data = db.StRegisteredCourses.FirstOrDefault(a => a.CourseId == courseId && a.StudentRegistrationNumber == stRegisteredCours.StudentRegistrationNumber);
-                if (data == null)
+                var data = db.StRegisteredCourses.FirstOrDefault(a => a.Course == stRegisteredCours.Course && a.StudentRegistrationNumber == stRegisteredCours.StudentRegistrationNumber);
+                if (data != null)
                 {
                     db.StRegisteredCourses.Add(stRegisteredCours);
                     db.SaveChanges();
 
-                    Models.student studentdetails = db.students.FirstOrDefault(a => a.StudentRegistrationNumber == stRegisteredCours.StudentRegistrationNumber);
-                    Course coursedetails = db.Courses.FirstOrDefault(a => a.CourseId == stRegisteredCours.CourseId);
+                    student studentdetails = db.students.FirstOrDefault(a => a.StudentRegistrationNumber == stRegisteredCours.StudentRegistrationNumber);
+                    Course coursedetails = db.Courses.FirstOrDefault(a => a.CourseId == stRegisteredCours.CourseId);                    
                     ViewBag.CourseId = new SelectList(db.Courses, "CourseId", "CourseName", stRegisteredCours.CourseId);
                     var fromAddress = new MailAddress("gv9914667@gmail.com", "gv9914667@gmail.com");
                     var toAddress = new MailAddress(studentdetails.Email, studentdetails.Email);
-                    const string fromPassword = "20.July.93";
+                    const string fromPassword = "20.July.93";//"k_4A2aecT27WYXGCztsQGJi8BYuBr0R136ltw44";
                     const string subject = "Student Management COurse registration email";
                     string body = $"{studentdetails.Firstname} {studentdetails.Lastname} is registered to the course {coursedetails.CourseName}. Fee amount - { coursedetails.fees}";
 
-                    ViewBag.message = $"Registered to the Course {coursedetails.CourseName}";
+
 
                     var smtp = new SmtpClient()
                     {
@@ -149,19 +131,13 @@ namespace SMS_3.Controllers.Registered_Course
                 else
                 {
                     ModelState.AddModelError("Duplicate entry", "student is already registered to this course. please select proper course for registration");
-                    return RedirectToAction("Index", "Courses");
-
+                    return View();
                 }
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index");
             }
 
-            return RedirectToAction("Index", "Courses");
-
+            return View();
         }
-
-
-
-
 
         // GET: StRegisteredCours/Edit/5
         public ActionResult Edit(Guid? id)
@@ -170,7 +146,7 @@ namespace SMS_3.Controllers.Registered_Course
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var stRegisteredCours = db.StRegisteredCourses.Find(id);
+            StRegisteredCours stRegisteredCours = db.StRegisteredCourses.Find(id);
             if (stRegisteredCours == null)
             {
                 return HttpNotFound();
@@ -203,7 +179,7 @@ namespace SMS_3.Controllers.Registered_Course
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            var stRegisteredCours = db.StRegisteredCourses.Find(id);
+            StRegisteredCours stRegisteredCours = db.StRegisteredCourses.Find(id);
             if (stRegisteredCours == null)
             {
                 return HttpNotFound();
@@ -216,7 +192,7 @@ namespace SMS_3.Controllers.Registered_Course
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(Guid id)
         {
-            var stRegisteredCours = db.StRegisteredCourses.Find(id);
+            StRegisteredCours stRegisteredCours = db.StRegisteredCourses.Find(id);
             db.StRegisteredCourses.Remove(stRegisteredCours);
             db.SaveChanges();
             return RedirectToAction("Index");
